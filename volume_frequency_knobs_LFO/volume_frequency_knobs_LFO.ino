@@ -1,6 +1,6 @@
 // TODO:
 // - implement v/oct on the VCO
-// - knobs: root(the frequency becomes the root), octave, scale, range, clock
+// - knobs: root(the frequency becomes the root), octave, scale, range
 // - button: random
 // - from the VCO_frequency(root) you add or subtract by a specific random amount)
 
@@ -36,6 +36,7 @@ byte VCO_waveform;
 const int quantize_pin = 7;
 bool quantize;
 IntMap tone_index_map(0, 1023, 0, 60);
+int v_oct = 0;
 
 
 
@@ -59,6 +60,9 @@ int clock_BPM;
 int clock_milli;
 Metronome kMetro;
 EventDelay kClockLED;
+
+// random sequencer randSeq
+int range;
 
 
 void set_LFO_wavetable(byte n) {
@@ -126,17 +130,9 @@ void updateControl() {
   set_LFO_wavetable(waveform);
   float vibrato = VCO_fm_cv * kLFO.next();
 
-  // set the VCO
+  // read the VCO
   int VCO_frequency = mozziAnalogRead(VCO_FREQ_PIN); // value is 0-1023
   quantize = digitalRead(quantize_pin);
-  if (quantize) {
-    aSin.setFreq(note_freq[tone_index_map(VCO_frequency + vibrato)] );
-  }
-  else {
-    aSin.setFreq(VCO_frequency + vibrato);
-  }
-  VCO_waveform = wavetable_choice_map(mozziAnalogRead(VCO_waveform_pin));
-  set_VCO_wavetable(VCO_waveform);
 
   // LPF
   //  LPF.setCutoffFreq(250);
@@ -151,6 +147,25 @@ void updateControl() {
   if (kClockLED.ready()) {
     digitalWrite(clock_LED_pin, LOW);
   }
+
+  // read the quantizer
+  if (kClockLED.ready()) {
+    int range = 5;
+    int octave = 0;
+    //  int scale = 0;
+    int root = tone_index_map(VCO_frequency);
+    v_oct = rand(root + octave, root + octave + range+1);
+  }
+  
+  // Set the VCO
+//  VCO_frequency = VCO_frequency + v_oct;
+  if (quantize) {
+//    VCO_frequency = note_freq[tone_index_map(VCO_frequency) + v_oct];
+    VCO_frequency = note_freq[tone_index_map(VCO_frequency)];
+  }
+  aSin.setFreq(VCO_frequency + vibrato);
+  VCO_waveform = wavetable_choice_map(mozziAnalogRead(VCO_waveform_pin));
+  set_VCO_wavetable(VCO_waveform);
 }
 
 
