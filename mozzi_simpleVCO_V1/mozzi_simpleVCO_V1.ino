@@ -24,7 +24,7 @@
 
 
 //PINS!
-const byte analog_inputs[5] = {A0, A1, A2, A3, A4};  // {tone, volume, waveform, cutoff, resonance}
+const byte analog_inputs[5] = {A4, A5, A0, A1, A2};  // {tone, volume, waveform, cutoff, resonance}
 const byte trigger_pin = 4;
 
 
@@ -43,7 +43,7 @@ Oscil <2048, AUDIO_RATE> oscillator;
 //ADSR <AUDIO_RATE, AUDIO_RATE> envelope;
 
 //low pass filter
-//LowPassFilter lpf; // cutoff 0-255 -> 0-8192Hz; resonance 0-255 -> low-high
+LowPassFilter lpf; // cutoff 0-255 -> 0-8192Hz; resonance 0-255 -> low-high
 
 //maps
 AutoMap tone_index_map(0, 1023, 0, 59);
@@ -98,8 +98,8 @@ void setup() {
   startMozzi();
   oscillator.setFreq(220);
   oscillator.setTable(SIN2048_DATA);
-  //lpf.setResonance(0);
-  //lpf.setCutoffFreq(255);
+  lpf.setResonance(0);
+  lpf.setCutoffFreq(255);
   //envelope.setLevels(255, 150, 150, 0);
   //envelope.setTimes(20, 20, 4000, 20);
 }
@@ -118,10 +118,10 @@ void updateControl() {
   set_wavetable(waveform);
   oscillator.setFreq(note_freq[tone_index]); 
   
-  //cutoff = (mozziAnalogRead(analog_inputs[3]) >> 3) + 50;
-  //resonance = mozziAnalogRead(analog_inputs[4]) >> 4;
-  //lpf.setResonance(resonance);
-  //lpf.setCutoffFreq(cutoff);
+//  cutoff = (mozziAnalogRead(analog_inputs[3]) >> 3) + 50;
+//  resonance = mozziAnalogRead(analog_inputs[4]) >> 4;
+//  lpf.setResonance(resonance);
+//  lpf.setCutoffFreq(cutoff);
 }
 
 
@@ -131,9 +131,9 @@ int updateAudio() {
   int audio;
   if (waveform != 3 or waveform != 4) { audio = (oscillator.next() * volume) >> 2; }
   else { audio = (oscillator.next() * volume) >> 4; } // the square and saw waves are fucking loud -- this mellows them to be about the same volume as the other waveforms
-  //int filtered_audio = lpf.next(audio);
-  return audio;
-  //return filtered_audio;
+  int filtered_audio = lpf.next(audio);
+//  return audio;
+  return filtered_audio;
 }
 
 
