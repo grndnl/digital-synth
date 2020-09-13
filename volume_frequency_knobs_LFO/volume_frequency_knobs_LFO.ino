@@ -1,3 +1,8 @@
+// TODO: 
+// - implement v/oct on the VCO
+// - knobs: root, octave, scale, range, clock
+// - button: random
+
 
 #include <MozziGuts.h>
 #include <Oscil.h> // oscillator template
