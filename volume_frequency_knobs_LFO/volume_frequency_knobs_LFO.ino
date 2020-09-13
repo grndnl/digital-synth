@@ -1,7 +1,8 @@
 // TODO: 
 // - implement v/oct on the VCO
-// - knobs: root, octave, scale, range, clock
+// - knobs: root(the frequency becomes the root), octave, scale, range, clock
 // - button: random
+// - from the VCO_frequency(root) you add or subtract by a specific random amount)
 
 
 #include <MozziGuts.h>
