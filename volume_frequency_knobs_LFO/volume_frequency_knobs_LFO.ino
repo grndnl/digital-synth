@@ -138,34 +138,34 @@ void updateControl() {
   //  LPF.setCutoffFreq(250);
 
   // Clock
-  clock_milli= clock_map(mozziAnalogRead(clock_pin));
+  clock_milli = clock_map(mozziAnalogRead(clock_pin));
   kMetro.set(clock_milli);    // set metronome to clock_milli
   if (kMetro.ready()) {    // if metro.ready, flash led
     digitalWrite(clock_LED_pin, HIGH);// turn on led
     kClockLED.start(10); // eventDelat led.off
+
+    // set the sequencer
+    int range = 5;
+    int octave = 0;
+    //  int scale = 0;
+    int root = tone_index_map(VCO_frequency);
+    v_oct = rand(root + octave, root + octave + range + 1);
   }
   if (kClockLED.ready()) {
     digitalWrite(clock_LED_pin, LOW);
   }
 
-  // read the quantizer
-  if (kClockLED.ready()) {
-    int range = 5;
-    int octave = 0;
-    //  int scale = 0;
-    int root = tone_index_map(VCO_frequency);
-    v_oct = rand(root + octave, root + octave + range+1);
-  }
-  
+
   // Set the VCO
-//  VCO_frequency = VCO_frequency + v_oct;
+  //  VCO_frequency = VCO_frequency + v_oct;
   if (quantize) {
-//    VCO_frequency = note_freq[tone_index_map(VCO_frequency) + v_oct];
-    VCO_frequency = note_freq[tone_index_map(VCO_frequency)];
+    VCO_frequency = note_freq[tone_index_map(VCO_frequency) + v_oct];
+    //    VCO_frequency = note_freq[tone_index_map(VCO_frequency)];
   }
   aSin.setFreq(VCO_frequency + vibrato);
   VCO_waveform = wavetable_choice_map(mozziAnalogRead(VCO_waveform_pin));
   set_VCO_wavetable(VCO_waveform);
+  
 }
 
 
