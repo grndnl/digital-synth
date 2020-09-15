@@ -63,6 +63,10 @@ EventDelay kClockLED;
 
 // random sequencer randSeq
 int range;
+/* scales: 
+ *  major
+*/
+int scales[1][8] = {{0, 2, 2, 1, 2, 2, 2, 1}};
 
 
 void set_LFO_wavetable(byte n) {
@@ -147,9 +151,10 @@ void updateControl() {
     // set the sequencer
     int range = 5;
     int octave = 0;
-    //  int scale = 0;
+    int scale = 0;
     int root = tone_index_map(VCO_frequency);
-    v_oct = rand(root + octave, root + octave + range + 1);
+//    v_oct = rand(root + octave, root + octave + range + 1);
+    v_oct = root + octave + scales[0][rand(0,range)];
   }
   if (kClockLED.ready()) {
     digitalWrite(clock_LED_pin, LOW);
